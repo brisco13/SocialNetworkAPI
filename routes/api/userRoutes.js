@@ -25,7 +25,7 @@ router
   // delete user by id
   .delete(deleteUser)
   // update user by id
-  .update(updateUser);
+  .put(updateUser);
 
 // /api/users/:userID/friends/:friendID
 router
