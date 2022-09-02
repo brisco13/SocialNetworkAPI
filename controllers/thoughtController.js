@@ -2,30 +2,6 @@
 const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
-// // function to compile all thoughts into a single array/object
-// const compileThoughts = async () => {
-//   Thought.aggregate()
-//     .count("thoughtCount")
-//     .then((numberOfThoughts) => numberOfThoughts);
-// };
-
-// // function to compile all reactions to a thought into a single array/object
-// const compileReactions = async () => {
-//   Thought.aggregate([
-//     // only include the given thought by using $match
-//     { $match: { _id: ObjectId(thoughtId) } },
-//     {
-//       $unwind: "$reactions",
-//     },
-//     {
-//       $group: {
-//         _id: ObjectId(thoughtId),
-//         reactions: { $addToSet: "$reactions.reactionBody" },
-//       },
-//     },
-//   ]);
-// };
-
 module.exports = {
   // Get all Thoughts
   getThoughts(req, res) {
@@ -33,7 +9,6 @@ module.exports = {
       .then(async (thoughts) => {
         const thoughtObj = {
           thoughts,
-          //allThoughts: await compileThoughts(),
         };
         return res.json(thoughtObj);
       })
@@ -51,7 +26,6 @@ module.exports = {
           ? res.status(404).json({ message: "No thought with that ID" })
           : res.json({
               thought,
-              //reactions: await compileReactions(req.params.thoughtsId),
             })
       )
       .catch((err) => {
