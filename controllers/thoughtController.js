@@ -2,29 +2,29 @@
 const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
-// function to compile all thoughts into a single array/object
-const compileThoughts = async () => {
-  Thought.aggregate()
-    .count("thoughtCount")
-    .then((numberOfThoughts) => numberOfThoughts);
-};
+// // function to compile all thoughts into a single array/object
+// const compileThoughts = async () => {
+//   Thought.aggregate()
+//     .count("thoughtCount")
+//     .then((numberOfThoughts) => numberOfThoughts);
+// };
 
-// function to compile all reactions to a thought into a single array/object
-const compileReactions = async () => {
-  Thought.aggregate([
-    // only include the given thought by using $match
-    { $match: { _id: ObjectId(thoughtId) } },
-    {
-      $unwind: "$reactions",
-    },
-    {
-      $group: {
-        _id: ObjectId(thoughtId),
-        reactions: { $addToSet: "$reactions.reactionBody" },
-      },
-    },
-  ]);
-};
+// // function to compile all reactions to a thought into a single array/object
+// const compileReactions = async () => {
+//   Thought.aggregate([
+//     // only include the given thought by using $match
+//     { $match: { _id: ObjectId(thoughtId) } },
+//     {
+//       $unwind: "$reactions",
+//     },
+//     {
+//       $group: {
+//         _id: ObjectId(thoughtId),
+//         reactions: { $addToSet: "$reactions.reactionBody" },
+//       },
+//     },
+//   ]);
+// };
 
 module.exports = {
   // Get all Thoughts
@@ -33,7 +33,7 @@ module.exports = {
       .then(async (thoughts) => {
         const thoughtObj = {
           thoughts,
-          allThoughts: await compileThoughts(),
+          //allThoughts: await compileThoughts(),
         };
         return res.json(thoughtObj);
       })
@@ -44,13 +44,14 @@ module.exports = {
   },
   // Get a single thought
   getSingleThought(req, res) {
-    Thought.findOne({ _id: req.params.thoughtId })
+    Thought.findOne({ _id: ObjectID(req.params.thoughtId) })
+      .select("-__v")
       .then(async (thought) =>
         !thought
           ? res.status(404).json({ message: "No thought with that ID" })
           : res.json({
               thought,
-              reactions: await compileReactions(req.params.thoughtsId),
+              //reactions: await compileReactions(req.params.thoughtsId),
             })
       )
       .catch((err) => {
@@ -61,7 +62,14 @@ module.exports = {
   // create a new thought
   createThought(req, res) {
     Thought.create(req.body)
-      .then((user) => res.json(user))
+      .then((thought) => {
+        return User.findOneAndUpdate(
+          { username: req.body.username },
+          { $addToSet: { thoughts: thought._id } },
+          { new: true }
+        );
+      })
+      .then((thought) => res.json(thought))
       .catch((err) => res.status(500).json(err));
   },
   // Delete a thought and remove its associattion from user
@@ -79,7 +87,7 @@ module.exports = {
       .then((user) =>
         !user
           ? res.status(404).json({
-              message: "Thought deleted, but no users found",
+              message: "Thought deleted, but no user association found",
             })
           : res.json({
               message: "Thought and user association successfully deleted",
@@ -93,15 +101,15 @@ module.exports = {
 
   // update a thought
   updateThought(req, res) {
-    Thought.findOneAndUpdate({ _id: req.params.thoughtId })
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
       .then((thought) =>
         !thought
           ? res.status(404).json({ message: "No such thought exists" })
-          : User.findOneAndUpdate(
-              { thoughts: req.params.thoughtId },
-              { $pull: { thoughts: req.params.thoughtId } },
-              { new: true }
-            )
+          : res.json(thought)
       )
       .then((user) =>
         !user
@@ -120,11 +128,16 @@ module.exports = {
 
   // Add a reaction to a thought
   addReaction(req, res) {
-    console.log("You are adding a reaction");
-    console.log(req.body);
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $addToSet: { reactions: req.body } },
+      {
+        $addToSet: {
+          reactions: {
+            reactionBody: req.body.reactionBody,
+            username: req.body.username,
+          },
+        },
+      },
       { runValidators: true, new: true }
     )
       .then((thought) =>
@@ -140,7 +153,7 @@ module.exports = {
   removeReaction(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
-      { $pull: { reaction: { reactionId: req.params.reactionId } } },
+      { $pull: { reactions: { _id: req.params.reactionId } } },
       { runValidators: true, new: true }
     )
       .then((thought) =>
