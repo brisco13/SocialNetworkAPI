@@ -19,7 +19,7 @@ router
 
 // /api/users/:_id
 router
-  .route("/:_id")
+  .route("/:userId")
   // Get single user by id
   .get(getSingleUser)
   // delete user by id
@@ -29,7 +29,7 @@ router
 
 // /api/users/:userID/friends/:friendID
 router
-  .route("/:userID/friends/:friendID")
+  .route("/:userId/friends/:friendId")
   // add friend
   .post(addFriend)
   // delete friend

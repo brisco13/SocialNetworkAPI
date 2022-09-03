@@ -9,14 +9,17 @@ module.exports = {
       .populate("friends")
       .populate("thoughts")
       .then((Users) => res.json(Users))
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
   // Get a single user
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
       .populate("friends")
       .populate("thoughts")
-      .select("-__v")
+      //.select("-__v")
       .then((User) =>
         !User
           ? res.status(404).json({ message: "No User with that ID" })
@@ -27,8 +30,10 @@ module.exports = {
   // Create a User
   createUser(req, res) {
     User.create(req.body)
-      .then((user) => res.json(user))
+      .then((user) => { 
+      res.json(user);})
       .catch((err) => {
+        console.log(err);
         return res.status(500).json(err);
       });
   },
@@ -63,13 +68,14 @@ module.exports = {
   addFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $addToSet: { friends: req.params.friendID } },
+      { $addToSet: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
-      .then((user) =>
+      .then((user) =>{
+
         !user
           ? res.status(404).json({ message: "No user with this id!" })
-          : res.json(user)
+          : res.json(user)}
       )
       .catch((err) => res.status(500).json(err));
   },
@@ -77,10 +83,10 @@ module.exports = {
   deleteFriend(req, res) {
     User.findOneAndUpdate(
       { _id: req.params.userId },
-      { $pull: { friends: req.params.friendID } },
+      { $pull: { friends: req.params.friendId } },
       { runValidators: true, new: true }
     )
-      .then((user) =>
+      .then((user) => 
         !user
           ? res.status(404).json({ message: "No user with this id!" })
           : res.json(user)

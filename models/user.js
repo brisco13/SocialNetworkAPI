@@ -19,16 +19,16 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: [validateEmail, "Please enter valid email"],
+      match: [/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/],
     },
-    thoughts: {
+    thoughts: [{
       type: Schema.Types.ObjectId,
-      ref: "thought",
-    },
-    friends: {
+      ref: "thought"
+    },],
+    friends: [{
       type: Schema.Types.ObjectId,
-      ref: "user",
-    },
+      ref: "user"
+    },],
   },
   {
     toJSON: {
@@ -39,6 +39,8 @@ const userSchema = new Schema(
 );
 
 userSchema.virtual("friendCount").get(function () {
+  if (this.friends.length == undefined) 
+  {return 0;}
   return this.friends.length;
 });
 

@@ -1,5 +1,4 @@
 // connect the throught ID to the user
-const { ObjectId } = require("mongoose").Types;
 const { User, Thought } = require("../models");
 
 module.exports = {
@@ -19,15 +18,15 @@ module.exports = {
   },
   // Get a single thought
   getSingleThought(req, res) {
-    Thought.findOne({ _id: ObjectID(req.params.thoughtId) })
+    Thought.findOne({ _id: req.params.thoughtId })
       .select("-__v")
-      .then(async (thought) =>
+      .then(async (thought) => {
         !thought
           ? res.status(404).json({ message: "No thought with that ID" })
           : res.json({
               thought,
-            })
-      )
+            });
+      })
       .catch((err) => {
         console.log(err);
         return res.status(500).json(err);
@@ -84,15 +83,6 @@ module.exports = {
         !thought
           ? res.status(404).json({ message: "No such thought exists" })
           : res.json(thought)
-      )
-      .then((user) =>
-        !user
-          ? res.status(404).json({
-              message: "Thought updated, but no users found",
-            })
-          : res.json({
-              message: "Thought and user association successfully updated",
-            })
       )
       .catch((err) => {
         console.log(err);

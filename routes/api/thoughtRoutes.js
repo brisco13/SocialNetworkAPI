@@ -1,4 +1,5 @@
 const router = require("express").Router();
+
 const {
   getThoughts,
   getSingleThought,
@@ -19,7 +20,7 @@ router
 
 // /api/thoughts/:id
 router
-  .route("/:id")
+  .route("/:thoughtId")
   // get by id
   .get(getSingleThought)
   // update by id
@@ -29,7 +30,12 @@ router
 
 // /api/thoughts/:thoughtID/reactions
 router
-  .route("/:thoughtID/reactions")
+  .route("/:thoughtId/reactions")
+  // add reaction
+  .post(addReaction)
+
+router
+  .route("/:thoughtId/reactions/:reactionId")
   // add reaction
   .post(addReaction)
   // remove a reaction

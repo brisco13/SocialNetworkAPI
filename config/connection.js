@@ -3,7 +3,7 @@ const { connect, connection } = require("mongoose");
 
 // connection string to port defined in .env file or the local DB
 const connectionString =
-  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/socialNetwork";
+  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/Social";
 
 // call to connect to the connection string
 connect(connectionString, {
