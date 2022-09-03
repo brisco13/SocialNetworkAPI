@@ -42,8 +42,8 @@ Additionally, the following operations can be used for thoughts (akin to a tweet
 - delete reactions from a thought
 
 Furthermore, there is functionality to delete all thoughts tied to a user upon their deletion. 
-To see a walklthrough of the funcationality of the application, please click below:
-[Walkthrough of functionality here!]
+To see a walklthrough of the functionality of the application, please see below:
+
 
 https://user-images.githubusercontent.com/103338620/188256749-22447df3-46e0-4b14-9f71-c0f45e323670.mp4
 
