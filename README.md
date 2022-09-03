@@ -43,7 +43,11 @@ Additionally, the following operations can be used for thoughts (akin to a tweet
 
 Furthermore, there is functionality to delete all thoughts tied to a user upon their deletion. 
 To see a walklthrough of the funcationality of the application, please click below:
-[Walkthrough of functionality here!](https://drive.google.com/file/d/12JRDMxq-xKj_fQytAjXAMYJ-bMP6tu6P/view)
+[Walkthrough of functionality here!]
+
+https://user-images.githubusercontent.com/103338620/188256749-22447df3-46e0-4b14-9f71-c0f45e323670.mp4
+
+
 
 ## Contact Me: 
 
